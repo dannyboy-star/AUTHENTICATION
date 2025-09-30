@@ -4,6 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ormconfig } from './config/ormconfig';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { JwtService } from '@nestjs/jwt';
+import { JwtRefreshAuthGuard } from './common/jwt-refresh-auth.guard';
 
 @Module({
   imports: [
@@ -16,6 +18,7 @@ import { UsersModule } from './users/users.module';
     AuthModule,
     UsersModule,
   ],
+  providers:[JwtService, JwtRefreshAuthGuard]
 })
 export class AppModule {}
 

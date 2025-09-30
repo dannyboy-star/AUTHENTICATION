@@ -2,13 +2,19 @@ import { Controller, Post, Body, UseGuards, Req, Logger } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { JwtAuthGuard } from '../common/jwt-auth.guard';
+import { JwtRefreshAuthGuard } from 'src/common/jwt-refresh-auth.guard'
+import { ApiCreatedResponse, ApiOkResponse, ApiResponse } from '@nestjs/swagger';
+
+import{User as UserEntity} from 'src/users/user.entity'
+import {User} from 'src/common/user.decorator'
+
 
 @Controller('auth')
 export class AuthController {
  private readonly logger = new Logger (AuthController.name);  
   constructor(private authService: AuthService) {}
 
+  @ApiCreatedResponse()
   @Post('register')
   async register(@Body() dto: RegisterDto) {
     const response = await this.authService.register(dto);
@@ -16,35 +22,21 @@ export class AuthController {
     return response;
   }
 
+  @ApiResponse({status: 201})
   @Post('login')
   async login(@Body() dto: LoginDto) {
     const response = await this.authService.login(dto);
     this.logger.debug(`✅ User logged in: ${dto.email}`);
     return response;
   }
-
-  @UseGuards(JwtAuthGuard)
+  @ApiOkResponse()
+  @UseGuards(JwtRefreshAuthGuard)
   @Post('refresh')
-  async refresh(@Req() req) {
-    const response = await this.authService.refresh(req.user);
-    this.logger.debug(`♻️ Token refreshed for userId: ${req.user.id}`);
+  async refresh(@User() user: UserEntity) {
+    const response = await this.authService.refresh(user);
+    this.logger.debug(`♻️ Token refreshed for userId: ${user.id}`);
     return response;
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }
 

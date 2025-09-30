@@ -34,8 +34,8 @@ return {
     expiresIn: '15m',
   }),
   refreshToken: this.jwtService.sign(payload, {
-    secret: this.config.get<string>('JWT_SECRET'), 
-    expiresIn: '15m',
+    secret: this.config.get<string>('JWT_REFRESH_WILLIAMS'), 
+    expiresIn: '7d',
   }),
 };
   }
@@ -47,6 +47,10 @@ return {
         secret: this.config.get<string>('JWT_SECRET'), 
         expiresIn: '15m',
       }),
+      refreshToken: this.jwtService.sign(payload,{
+        secret: this.config.get<string>('JWT_REFRESH_WILLIAMS'),
+        expiresIn: '7d',
+      })
     };
   }
 } 
