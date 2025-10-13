@@ -3,12 +3,12 @@ import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { JwtRefreshAuthGuard } from 'src/common/jwt-refresh-auth.guard'
-import { ApiCreatedResponse, ApiOkResponse, ApiResponse } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiOkResponse, ApiResponse, ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import{User as UserEntity} from 'src/users/user.entity'
 import {User} from 'src/common/user.decorator'
 
-
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
  private readonly logger = new Logger (AuthController.name);  
@@ -29,6 +29,8 @@ export class AuthController {
     this.logger.debug(`✅ User logged in: ${dto.email}`);
     return response;
   }
+
+  @ApiBearerAuth('JWT-auth')
   @ApiOkResponse()
   @UseGuards(JwtRefreshAuthGuard)
   @Post('refresh')
