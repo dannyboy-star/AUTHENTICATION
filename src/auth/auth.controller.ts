@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, Req, Logger } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Req, Logger, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -9,6 +9,7 @@ import{User as UserEntity} from 'src/users/user.entity'
 import {User} from 'src/common/user.decorator'
 
 @ApiTags('Auth')
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller('auth')
 export class AuthController {
  private readonly logger = new Logger (AuthController.name);  

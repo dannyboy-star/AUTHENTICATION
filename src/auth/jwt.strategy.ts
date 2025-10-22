@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(
@@ -9,7 +10,9 @@ export class JwtStrategy extends PassportStrategy(
   'jwt'
 ) {
   private readonly logger = new Logger(JwtStrategy.name);
-  constructor(private config: ConfigService) {
+  constructor(
+    private config: ConfigService,
+    private usersService: UsersService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: config.get<string>('JWT_SECRET'),  
@@ -21,9 +24,12 @@ export class JwtStrategy extends PassportStrategy(
   }
 async validate(payload: any) {
   this.logger.debug(`✅ JWT validated, payload: ${JSON.stringify(payload)}`);
-    return { id: payload.sub, email: payload.email, role: payload.role };
+  const user = await this.usersService.findById(payload.sub);
+  return user;
   }
 }
 
 
 
+// { id: payload.sub, email: payload.email, role: payload.role };
+// delete user.password;
